@@ -14,7 +14,7 @@ function Hero() {
   };
 
   const handleBookAppointmentClick = () => {
-    navigate("/appointment");
+    navigate("/login");
   };
 
   useEffect(() => {
@@ -36,23 +36,21 @@ function Hero() {
     <div className="section-container">
       <div className="hero-section">
         <div className="text-section">
-          <p className="text-headline">❤️ Health comes first</p>
+          <p className="text-headline">❤️ Premier parcours pour le docteur 100% en ligne.</p>
           <h2 className="text-title">
-            Find your Doctor and make an Appointments
+          simplifier la gestion des dossiers de vos patients
           </h2>
           <p className="text-descritpion">
-            Talk to online doctors and get medical advice, online prescriptions,
-            refills and medical notes within minutes. On-demand healthcare
-            services at your fingertips.
+          optimiser l'analyse des données médicales et améliorer la prise en charge de vos patients.
           </p>
           <button
             className="text-appointment-btn"
             type="button"
             onClick={handleBookAppointmentClick}
           >
-            <FontAwesomeIcon icon={faCalendarCheck} /> Book Appointment
+             Commencer
           </button>
-          <div className="text-stats">
+          {/* <div className="text-stats">
             <div className="text-stats-container">
               <p>145k+</p>
               <p>Receive Patients</p>
@@ -67,7 +65,7 @@ function Hero() {
               <p>10+</p>
               <p>Years of Experience</p>
             </div>
-          </div>
+          </div> */}
         </div>
 
         <div className="hero-image-section">

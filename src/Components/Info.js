@@ -1,6 +1,10 @@
 import React from "react";
 import InformationCard from "./InformationCard";
-import { faHeartPulse, faTruckMedical, faTooth } from "@fortawesome/free-solid-svg-icons";
+import {
+  faHeartPulse,
+  faTruckMedical,
+  faTooth,
+} from "@fortawesome/free-solid-svg-icons";
 import "../Styles/Info.css";
 
 function Info() {
@@ -8,18 +12,47 @@ function Info() {
     <div className="info-section" id="services">
       <div className="info-title-content">
         <h3 className="info-title">
-          <span>What We Do</span>
+          <span>Nos services</span>
         </h3>
         <p className="info-description">
-          We bring healthcare to your convenience, offering a comprehensive
-          range of on-demand medical services tailored to your needs. Our
-          platform allows you to connect with experienced online doctors who
-          provide expert medical advice, issue online prescriptions, and offer
-          quick refills whenever you require them.
+          Notre plateforme offre aux médecins une solution complète pour la
+          gestion de leurs patients, combinant une interface conviviale avec des
+          fonctionnalités puissantes.
         </p>
       </div>
 
-      <div className="info-cards-content">
+      <div class="services-container">
+    <div class="service-line">
+        <div class="service-icon">🕒</div>
+        <div class="service-text">
+            <strong>Modélisation Innovante de Données Médicales :</strong> Transformez efficacement des bases de données médicales hétérogènes en graphes de données, simplifiant ainsi la gestion administrative et permettant de consacrer plus de temps à vos patients.
+        </div>
+    </div>
+
+    <div class="service-line">
+        <div class="service-icon">🔬</div>
+        <div class="service-text">
+            <strong>Synthèse Dynamique de Graphes de Données :</strong> Offrez une visualisation intelligente des informations les plus pertinentes en combinant des techniques de synthèse de données médicales et de visualisation de graphes, permettant une analyse avancée et des diagnostics plus précis.
+        </div>
+    </div>
+
+    <div class="service-line">
+        <div class="service-icon">📁🧠</div>
+        <div class="service-text">
+            <strong>Documentation Médicale Intelligente :</strong> Ajoutez des documents médicaux en quelques clics et laissez notre plateforme extraire automatiquement les données pertinentes, simplifiant ainsi le processus de documentation médicale.
+        </div>
+    </div>
+
+    <div class="service-line">
+        <div class="service-icon">📊🔄</div>
+        <div class="service-text">
+            <strong>Graphes Dynamiques :</strong> Explorez vos données à travers des graphes interactifs, offrant une perspective visuelle de vos patients et facilitant la compréhension des informations médicales.
+        </div>
+    </div>
+</div>
+
+
+      {/* <div className="info-cards-content">
         <InformationCard
           title="Emergency Care"
           description="Our Emergency Care service is designed to be your reliable support
@@ -48,7 +81,7 @@ function Info() {
             procedures and restorative treatments."
           icon={faTooth}
         />
-      </div>
+      </div> */}
     </div>
   );
 }

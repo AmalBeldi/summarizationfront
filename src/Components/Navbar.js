@@ -8,7 +8,7 @@ import {
 import "../Styles/Navbar.css";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-
+import opencems from "../Assets/opencems.png"
 function Navbar() {
   const [nav, setNav] = useState(false);
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
@@ -29,17 +29,17 @@ function Navbar() {
 
   return (
     <div className="navbar-section">
-      <h1 className="navbar-title">
+      <div className="navbar-title">
         <Link to="/">
-          Health <span className="navbar-sign">+</span>
+         <img src={opencems} style={{width:"20%"}} />
         </Link>
-      </h1>
+      </div>
 
       {/* Desktop */}
       <ul className="navbar-items">
         <li>
           <Link to="/" className="navbar-links">
-            Home
+            Acceuil
           </Link>
         </li>
         <li>
@@ -49,10 +49,10 @@ function Navbar() {
         </li>
         <li>
           <a href="#about" className="navbar-links">
-            About
+            À propos
           </a>
         </li>
-        <li>
+        {/* <li>
           <a href="#reviews" className="navbar-links">
             Reviews
           </a>
@@ -61,17 +61,17 @@ function Navbar() {
           <a href="#doctors" className="navbar-links">
             Doctors
           </a>
-        </li>
+        </li> */}
       </ul>
 
-      <button
+      {/* <button
         className="navbar-btn"
         type="button"
         disabled={isButtonDisabled}
         onClick={handleChatBtnClick}
       >
         <FontAwesomeIcon icon={faCommentDots} /> Live Chat
-      </button>
+      </button> */}
 
       {/* Mobile */}
       <div className={`mobile-navbar ${nav ? "open-nav" : ""}`}>

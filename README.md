@@ -1,78 +1,70 @@
-# Health Plus
+# Getting Started with Create React App
 
-Welcome to the Health Plus project repository! This is a React-based website aimed at providing accessible and personalized healthcare services to users. The website allows users to connect with expert doctors, schedule appointments, and receive expert medical advice.
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Project Overview
+## Available Scripts
 
-- **Website**: [Health Plus](https://alkaison.github.io/Health-Plus/ "Health Plus")
-- **Framework**: React.js
-- **Deployment**: GitHub Pages
-- **Libraries**: React-Toastify, React Router DOM, FontAwesomeIcon
+In the project directory, you can run:
 
-## Features
+### `npm start`
 
-- Easily schedule appointments with the specialists.
-- Engage in virtual consultations to receive expert medical advice.
-- Responsive UI design for seamless user experience across devices.
-- Utilizes React-Toastify for notifications, React Router DOM for page routing, and FontAwesomeIcon for icons.
-- Deployed using GitHub Pages for easy access and sharing.
+Runs the app in the development mode.\
+Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-## Screenshots
+The page will reload when you make changes.\
+You may also see any lint errors in the console.
 
-### Hero Section
+### `npm test`
 
-![Health-Plus Image-1](https://i.postimg.cc/0Q4839KN/Health-Plus-Image1.png)
+Launches the test runner in the interactive watch mode.\
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### Information Section
+### `npm run build`
 
-![Health-Plus Image-2](https://i.postimg.cc/zvRJY4TF/Health-Plus-Image2.png)
+Builds the app for production to the `build` folder.\
+It correctly bundles React in production mode and optimizes the build for the best performance.
 
-### About Section
+The build is minified and the filenames include the hashes.\
+Your app is ready to be deployed!
 
-![Health-Plus Image-3](https://i.postimg.cc/8zGrwbV0/Health-Plus-Image3.png)
+See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### Why Choose Health Plus?
+### `npm run eject`
 
-![Health-Plus Image-4](https://i.postimg.cc/fknMz5Kn/Health-Plus-Image4.png)
+**Note: this is a one-way operation. Once you `eject`, you can't go back!**
 
-### Reviews Section
+If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-![Health-Plus Image-5](https://i.postimg.cc/xjkHdCRt/Health-Plus-Image5.png)
+Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
 
-### Doctors Section
+You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
 
-![Health-Plus Image-6](https://i.postimg.cc/8PM6h0xv/Health-Plus-Image6.png)
+## Learn More
 
-### Footer Section
+You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-![Health-Plus Image-7](https://i.postimg.cc/sftWGrHy/Health-Plus-Image7.png)
+To learn React, check out the [React documentation](https://reactjs.org/).
 
-### Legal Documents Page
+### Code Splitting
 
-![Health-Plus Image-8](https://i.postimg.cc/FKskXszb/Health-Plus-Image8.png)
+This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
 
-### Appointment Form Page
+### Analyzing the Bundle Size
 
-![Health-Plus Image-9](https://i.postimg.cc/2SxLtBk8/Health-Plus-Image9.png)
+This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
 
-## Deployment
+### Making a Progressive Web App
 
-The website is deployed using GitHub Pages and can be accessed at [https://alkaison.github.io/Health-Plus/](https://alkaison.github.io/Health-Plus/).
+This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
 
-## Getting Started
+### Advanced Configuration
 
-To run the project locally:
+This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
 
-1. Clone this repository: `git clone https://github.com/Alkaison/Health-Plus.git`
-2. Navigate to the project directory: `cd Health-Plus`
-3. Install dependencies: `npm install`
-4. Start the development server: `npm start`
-5. Open your browser and visit: `http://localhost:3000/Health-Plus`
+### Deployment
 
-## Contributing
+This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
 
-Contributions are welcome! If you find a bug or have a feature request, please open an issue or submit a pull request.
+### `npm run build` fails to minify
 
-## License
-
-This project is licensed under the [MIT License](./LICENSE "Project LICENSE").
+This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)

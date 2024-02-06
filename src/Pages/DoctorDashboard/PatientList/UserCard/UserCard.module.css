@@ -1,0 +1,34 @@
+.card{
+    width: 15rem;
+    border: 1.5px solid lightgray;
+    padding: 2rem;
+    margin: 1rem;
+    border-radius: 0.5rem;
+    display: flex ;
+    flex-direction: column;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    background-color: #F9F9F9;
+}
+
+.btnAccess{
+    width: 12rem;
+    margin-top: 2rem;
+    background-color: #2d6c8c;
+    color: white;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.age{
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: #484848;
+
+}
+.email{
+    font-size: 1rem;
+    font-weight: 600;
+    color:#484848
+}

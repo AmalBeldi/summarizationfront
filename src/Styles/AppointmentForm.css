@@ -3,7 +3,9 @@
     display: flex;
     flex-direction: column;
     gap: 40px;
-    background: linear-gradient(to right, #ECF2FF, #FBFCFF);
+    justify-content: center;
+    align-items: center;
+    /* background: linear-gradient(to right, #ECF2FF, #FBFCFF); */
 }
 .form-title {
     font-family: 'Poppins', sans-serif;
@@ -87,3 +89,21 @@
         font-size: 18px;
     }
 }
+.about-image1{
+    width: 15%;
+}
+.about-image-content{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding-block: 1rem;
+}
+
+.form-content{
+    width: 60%;
+    box-shadow:  0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 3rem;
+    border-radius: 0.5rem;
+
+}
+

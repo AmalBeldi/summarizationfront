@@ -2,9 +2,13 @@
     padding: 0 32px;
     text-align: center;
     background-color: white;
+    width: 80%;
+
+   margin-bottom: 2rem !important;
+    margin: 0 auto;
 }
 .info-title-content {
-    margin: 64px 0 128px 0;
+    margin: 64px 0 64px 0;
 }
 .info-title {
     font-family: 'Poppins', sans-serif;
@@ -25,7 +29,7 @@
     bottom: -12px;
 }
 .info-description {
-    margin: 64px;
+    margin-top: 64px;
     text-align: center;
     color: rgb(77, 75, 75);
     font-family: 'Rubik', sans-serif;
@@ -92,3 +96,71 @@
         grid-template-columns: repeat(1, 1fr);
     }
 }
+
+
+/* styles.css */
+
+
+.advantages-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: justify;
+    margin-bottom: 3rem;
+  }
+  
+  .advantage-line {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 1s forwards;
+  }
+  
+  .advantage-line:nth-child(1) {
+    animation-delay: 0.2s;
+  }
+  
+  .advantage-line:nth-child(2) {
+    animation-delay: 0.4s;
+  }
+  
+  .advantage-line:nth-child(3) {
+    animation-delay: 0.6s;
+  }
+  
+  .advantage-icon {
+    margin-right: 15px;
+    font-size: 24px;
+  }
+  
+  .advantage-text {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    text-align: start;
+
+  }
+  
+  @keyframes fadeInUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .service-line{
+    display: flex;
+    margin-bottom: 1rem;
+
+  }
+
+  .service-icon{
+    margin-right: 0.5rem;
+  }
+  .service-text{
+    font-size: 1.2rem;
+    text-align: justify;
+  }

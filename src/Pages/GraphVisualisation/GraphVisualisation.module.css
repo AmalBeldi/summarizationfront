@@ -1,0 +1,16 @@
+.container {
+    /* background-image: url("../../assets/splashScrren.png"); */
+    background-size: 100vw 100vh !important;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    height: 70vh;
+    display: flex;
+    align-items: center;
+    /* justify-content: center; */
+    flex-direction: column;
+    /* padding-inline: 2rem; */
+  }
+  .label {
+    font-size: 1rem !important;
+    margin-bottom: 0.5rem;
+  }

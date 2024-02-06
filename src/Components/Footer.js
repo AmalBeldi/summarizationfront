@@ -10,19 +10,17 @@ function Footer() {
         <div className="ft-info">
           <div className="ft-info-p1">
             <p className="ft-title">
-              Health <span className="ft-sign">+</span>
+            OpenCEMS
             </p>
             <p className="ft-description">
-              Talk to online doctors and get medical advice, online
-              prescriptions, refills and medical notes within minutes. On-demand
-              healthcare services at your fingertips.
+            optimiser l'analyse des données médicales et améliorer la prise en charge de vos patients..
             </p>
           </div>
 
-          <SubscribeNewsletter />
+          {/* <SubscribeNewsletter /> */}
         </div>
 
-        <div className="ft-list">
+        {/* <div className="ft-list">
           <p className="ft-list-title">Services</p>
           <ul className="ft-list-items">
             <li>
@@ -62,19 +60,19 @@ function Footer() {
               <Link to={"/legal"}>How it Works</Link>
             </li>
           </ul>
-        </div>
+        </div> */}
 
         <div className="ft-list" id="contact">
-          <p className="ft-list-title">Talk To Us</p>
+          <p className="ft-list-title">Contacter nous</p>
           <ul className="ft-list-items">
             <li>
-              <a href="mailto:support@healthplus.com">support@healthplus.com</a>
+              <a href="mailto:support@healthplus.com">support@opencems.com</a>
             </li>
-            <li>
+            {/* <li>
               <a href="mailto:appointment@healthplus.com">
                 appointment@healthplus.com
               </a>
-            </li>
+            </li> */}
             <li>
               <a href="tel:+022 5454 5252">+022 5454 5252</a>
             </li>
@@ -86,7 +84,7 @@ function Footer() {
       </div>
 
       <div className="ft-copyright">
-        <p>© 2013-2023 Health+. All rights reserved.</p>
+        <p>© 2024-205 OpenCEMS. All rights reserved.</p>
 
         <ul className="ft-social-links">
           <li>

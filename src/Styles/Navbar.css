@@ -13,6 +13,7 @@
 }
 .navbar-title {
     font-family: 'Poppins', sans-serif;
+    width: 50%;
 }
 .navbar-sign {
     color: #54de54;

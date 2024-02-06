@@ -1,53 +1,55 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 import "../Styles/AppointmentForm.css";
 import { ToastContainer, toast } from "react-toastify";
+import openCems from "../Assets/opencems.png"
+import axios from "axios"
 
 function AppointmentForm() {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
-
-  const [patientName, setPatientName] = useState("");
-  const [patientNumber, setPatientNumber] = useState("");
-  const [patientGender, setPatientGender] = useState("default");
-  const [appointmentTime, setAppointmentTime] = useState("");
-  const [preferredMode, setPreferredMode] = useState("default");
+  const navigate=useNavigate()
+  const [Email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  // const [patientGender, setPatientGender] = useState("default");
+  // const [appointmentTime, setAppointmentTime] = useState("");
+  // const [preferredMode, setPreferredMode] = useState("default");
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [formErrors, setFormErrors] = useState({});
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
+  let mailregex=new RegExp(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)
     // Validate form inputs
     const errors = {};
-    if (!patientName.trim()) {
-      errors.patientName = "Patient name is required";
-    } else if (patientName.trim().length < 8) {
-      errors.patientName = "Patient name must be at least 8 characters";
+    if (!Email.trim()) {
+      errors.patientName = "Email est obligatoire";
+    } else if (mailregex.test(Email.trim())===false) {
+      errors.patientName = "Veuillez vérifier votre email.";
     }
 
-    if (!patientNumber.trim()) {
-      errors.patientNumber = "Patient phone number is required";
-    } else if (patientNumber.trim().length !== 10) {
-      errors.patientNumber = "Patient phone number must be of 10 digits";
-    }
+    // if (!patientNumber.trim()) {
+    //   errors.patientNumber = "Patient phone number is required";
+    // } else if (patientNumber.trim().length !== 10) {
+    //   errors.patientNumber = "Patient phone number must be of 10 digits";
+    // }
 
-    if (patientGender === "default") {
-      errors.patientGender = "Please select patient gender";
-    }
-    if (!appointmentTime) {
-      errors.appointmentTime = "Appointment time is required";
-    } else {
-      const selectedTime = new Date(appointmentTime).getTime();
-      const currentTime = new Date().getTime();
-      if (selectedTime <= currentTime) {
-        errors.appointmentTime = "Please select a future appointment time";
-      }
-    }
-    if (preferredMode === "default") {
-      errors.preferredMode = "Please select preferred mode";
-    }
+    // if (patientGender === "default") {
+    //   errors.patientGender = "Please select patient gender";
+    // }
+    // if (!appointmentTime) {
+    //   errors.appointmentTime = "Appointment time is required";
+    // } else {
+    //   const selectedTime = new Date(appointmentTime).getTime();
+    //   const currentTime = new Date().getTime();
+    //   if (selectedTime <= currentTime) {
+    //     errors.appointmentTime = "Please select a future appointment time";
+    //   }
+    // }
+    // if (preferredMode === "default") {
+    //   errors.preferredMode = "Please select preferred mode";
+    // }
 
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
@@ -55,40 +57,75 @@ function AppointmentForm() {
     }
 
     // Reset form fields and errors after successful submission
-    setPatientName("");
-    setPatientNumber("");
-    setPatientGender("default");
-    setAppointmentTime("");
-    setPreferredMode("default");
+   
     setFormErrors({});
 
-    toast.success("Appointment Scheduled !", {
-      position: toast.POSITION.TOP_CENTER,
-      onOpen: () => setIsSubmitted(true),
-      onClose: () => setIsSubmitted(false),
-    });
+    axios
+    .post(`http://127.0.0.1:5000/login`, {
+      email:Email,
+      password: password,
+      role:"User",
+    })
+    .then((response) => {
+      sessionStorage.setItem("token", response.data.access_token);
+      // if(form.getFieldsValue()['typeLogin']==="Patient"){
+      //     let patientInfo={
+      //         email:form.getFieldsValue()["email"],
+      //         nom:response.data.name,
+      //         prenom:response.data.prenom,
+      //         age:response.data.age,
+      //         adresse:response.data.adresse,
+      //         téléphone:response.data.telephone,
+      //         sexe:response.data.sexe
+      //     }
+
+      //     form.setFieldsValue({
+      //         ...form.getFieldsValue(),
+      //         civilite:response.data.sexe==="female"?"Mme":"Mr",
+      //         nom:response.data.name,
+      //         prenom:response.data.prenom,
+      //         age:response.data.age,
+      //         adresse:response.data.adresse,
+      //         téléphone:response.data.telephone,
+      //         email:form.getFieldsValue()["email"]
+      //     })
+
+      //     sessionStorage.setItem("patientInfo",JSON.stringify(patientInfo))
+      //     navigate("/PatientDashboard")
+      // }
+      // else{
+
+          navigate("/DoctorDashboard");
+      // }
+    })
+    .catch((err) => console.log(err));
+
+    
   };
 
   return (
     <div className="appointment-form-section">
-      <h1 className="legal-siteTitle">
+      {/* <h1 className="legal-siteTitle">
         <Link to="/">
-          Health <span className="legal-siteSign">+</span>
+          OpenCEMS
         </Link>
-      </h1>
+      </h1> */}
+      <div className="about-image-content">
+        <img src={openCems} alt="Doctor Group" className="about-image1" />
+      </div>
 
       <div className="form-container">
         <h2 className="form-title">
-          <span>Book Appointment Online</span>
+          <span>Se connecter</span>
         </h2>
 
         <form className="form-content" onSubmit={handleSubmit}>
           <label>
-            Patient Full Name:
+            Email:
             <input
               type="text"
-              value={patientName}
-              onChange={(e) => setPatientName(e.target.value)}
+              value={Email}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
             {formErrors.patientName && <p className="error-message">{formErrors.patientName}</p>}
@@ -96,16 +133,16 @@ function AppointmentForm() {
 
           <br />
           <label>
-            Patient Phone Number:
+            Mot de passe:
             <input
-              type="text"
-              value={patientNumber}
-              onChange={(e) => setPatientNumber(e.target.value)}
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               required
             />
             {formErrors.patientNumber && <p className="error-message">{formErrors.patientNumber}</p>}
           </label>
-
+{/* 
           <br />
           <label>
             Patient Gender:
@@ -147,22 +184,22 @@ function AppointmentForm() {
               <option value="video">Video Call</option>
             </select>
             {formErrors.preferredMode && <p className="error-message">{formErrors.preferredMode}</p>}
-          </label>
+          </label> */}
 
           <br />
           <button type="submit" className="text-appointment-btn">
-            Confirm Appointment
+            Connecter
           </button>
 
-          <p className="success-message" style={{display: isSubmitted ? "block" : "none"}}>Appointment details has been sent to the patients phone number via SMS.</p>
+          {/* <p className="success-message" style={{display: isSubmitted ? "block" : "none"}}>Appointment details has been sent to the patients phone number via SMS.</p> */}
         </form>
       </div>
 
-      <div className="legal-footer">
+      {/* <div className="legal-footer">
         <p>© 2013-2023 Health+. All rights reserved.</p>
-      </div>
+      </div> */}
 
-      <ToastContainer autoClose={5000} limit={1} closeButton={false} />
+      {/* <ToastContainer autoClose={5000} limit={1} closeButton={false} /> */}
     </div>
   );
 }

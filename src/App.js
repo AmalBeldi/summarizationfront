@@ -5,18 +5,30 @@ import Home from "./Pages/Home";
 import Legal from "./Pages/Legal";
 import NotFound from "./Pages/NotFound";
 import Appointment from "./Pages/Appointment";
+import DoctorDashboard from "./Pages/DoctorDashboard/DoctorDashboard";
+import GraphVisualisation from "./Pages/GraphVisualisation/GraphVisualisation"
+import AppContext from "./context/AppContext";
 
 function App() {
   return (
     <div className="App">
-      <Router basename="/Health-Plus">
+    <AppContext>
+
+      <Router basename="/">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/legal" element={<Legal />} />
-          <Route path="/appointment" element={<Appointment />} />
+          <Route path="/login" element={<Appointment />} />
           <Route path="*" element={<NotFound />} />
+          <Route path="/DoctorDashboard" element={<DoctorDashboard />} />
+          <Route path="/graph" element={<GraphVisualisation />} />
+
+          
+
         </Routes>
       </Router>
+    </AppContext>
+
     </div>
   );
 }

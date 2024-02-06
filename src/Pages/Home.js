@@ -6,7 +6,7 @@ import About from "../Components/About";
 import BookAppointment from "../Components/BookAppointment";
 import Reviews from "../Components/Reviews";
 import Doctors from "../Components/Doctors";
-import Footer from "../Components/Footer";
+// import Footer from "../Components/Footer";
 
 function Home() {
   return (
@@ -16,9 +16,9 @@ function Home() {
       <Info />
       <About />
       <BookAppointment />
-      <Reviews />
-      <Doctors />
-      <Footer />
+      {/* <Reviews /> */}
+      {/* <Doctors /> */}
+      {/* <Footer /> */}
     </div>
   );
 }
