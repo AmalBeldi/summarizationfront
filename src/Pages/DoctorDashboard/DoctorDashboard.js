@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   ArrowLeftOutlined,
   BarChartOutlined,
@@ -6,6 +6,7 @@ import {
   FileImageOutlined,
   FilePdfOutlined,
   FileTextOutlined,
+  LineChartOutlined,
   LogoutOutlined,
   PieChartOutlined,
   PLusCircleOutlined,
@@ -91,9 +92,19 @@ const DoctorDashboard = () => {
       return "#D8BFD8";
     }
   };
-  
 
- 
+  useEffect(()=>{
+    if(selectedItem==="2-5"){
+      transformToJSONLD(graphData.nodes, graphData.links);
+      let data={email}
+
+      axios.post("http://127.0.0.1:5000/getOpenAiSummarize",data)
+    }
+
+   
+
+  },[selectedItem])
+
   const sendJSONLDToBackend = async (jsonLDData) => {
     try {
       const response = await axios.post(
@@ -116,60 +127,82 @@ const DoctorDashboard = () => {
           if (error) {
           } else if (quad) {
             const triple = {
-              subject:
-                quad.subject instanceof NamedNode ? quad.subject.value : "",
-              predicate:
-                quad.predicate instanceof NamedNode ? quad.predicate.value : "",
-              object:
-                quad.object instanceof NamedNode
-                  ? quad.object.value
-                  : quad.object.value,
+              subject: quad.subject instanceof NamedNode ? quad.subject.value : "",
+              predicate: quad.predicate instanceof NamedNode ? quad.predicate.value : "",
+              object: quad.object instanceof NamedNode ? quad.object.value : quad.object.value,
             };
+        
             rdfTriples.push(triple);
           } else {
-            // Now you have RDF triples with extracted values
-           
-            const nodes = [];
-            const edges = [];
-
+            // Extract labels before mapping
+            const nodeLabels = {};
+            const edgeLabels = {};
+        
             rdfTriples.forEach((triple) => {
               const { subject, predicate, object } = triple;
-
-              let lastSubject=subject.split('/')
-              let lastPart=lastSubject[lastSubject.length - 1];
-
-              let lastObject=object.split('/')
-              let lastPartObject=lastObject[lastObject.length - 1]
-
-              // Check if the triple represents a node
+        
+              // Extract label for nodes
               if (
-                predicate ===
-                  "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" &&
-                object !== "http://semanticweb.org/neo4j/edge"
+                predicate === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' &&
+                object !== 'http://semanticweb.org/neo4j/edge'
               ) {
-                if(parseInt(lastPart)){
-                 
-                  axios
-                  .get(`http://127.0.0.1:5000/get_node_info/${lastPart}`).then((res)=>{
-                    nodes.push({ id: parseInt(lastPart), type: object,info:{name:res.data?.labels[0]}});
-                  })
+                const labelTriple = rdfTriples.find(
+                  (t) =>
+                    t.subject === subject &&
+                    t.predicate === 'http://semanticweb.org/neo4j/label'
+                );
+        
+                if (labelTriple && labelTriple.object) {
+                  nodeLabels[subject] = labelTriple.object;
                 }
-                else{
-                  nodes.push({ id: lastPart, type: object});
-                }
-              
               }
-
-              // Check if the triple represents an edge
-              if (predicate === "http://semanticweb.org/neo4j/edge") {
-                edges.push({ from: parseInt(lastPart)?parseInt(lastPart):lastPart, to: parseInt(lastPartObject)?parseInt(lastPartObject):lastPartObject, label: "edge" });
+        
+              // Extract label for edges
+              if (predicate === 'http://semanticweb.org/neo4j/edge') {
+                const labelTriple = rdfTriples.find(
+                  (t) =>
+                    t.subject === subject &&
+                    t.predicate === 'http://semanticweb.org/neo4j/label'
+                );
+        
+                if (labelTriple && labelTriple.object) {
+                  edgeLabels[subject] = labelTriple.object;
+                }
               }
             });
-            // Now you have nodes and edges, you can use them as needed
-            const transformedData = transformGraphData({nodes,edges});
+            // Now you have extracted labels, proceed to mapping
+            const nodes = rdfTriples
+              .filter(
+                (triple) =>
+                  triple.predicate === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' &&
+                  triple.object !== 'http://semanticweb.org/neo4j/edge'
+              )
+              .map((triple) => {
+                const { subject, object } = triple;
+                const lastSubject = subject.split('/');
+                const lastPart = lastSubject[lastSubject.length - 1];
+                const label = nodeLabels[subject] || `Unknown (${lastPart})`;
+                return { id: lastPart, type: object, label, info: { name: label } };
+              });
+        
+            const edges = rdfTriples
+              .filter((triple) => triple.predicate === 'http://semanticweb.org/neo4j/edge')
+              .map((triple) => {
+                const { subject, object } = triple;
+                const lastSubject = subject.split('/');
+                const lastPart = lastSubject[lastSubject.length - 1];
+                const lastObject = object.split('/');
+                const lastPartObject = lastObject[lastObject.length - 1];
+                const edgeLabel = edgeLabels[subject] || 'Edge';
+                return { from: lastPart, to: lastPartObject, label: edgeLabel };
+              });
+        
+            // Now you have nodes and edges with labels, you can use them as needed
+            const transformedData = transformGraphData({ nodes, edges });
             setGraphData(transformedData);
           }
         });
+        
       } else {
         console.error(
           "Error sending JSON-LD data to the backend:",
@@ -182,6 +215,7 @@ const DoctorDashboard = () => {
   };
 
   const transformToJSONLD = (nodes, edges) => {
+    console.log(edges, "edg,eessss");
     const jsonLDData = {
       "@context": {
         label: "http://www.w3.org/2000/01/rdf-schema#label",
@@ -199,6 +233,7 @@ const DoctorDashboard = () => {
         source: edge.source,
         target: edge.target,
         type: "edge",
+        // label: edge.label,
       })),
     };
 
@@ -246,6 +281,8 @@ const DoctorDashboard = () => {
                 <FileTextOutlined />
               ),
               getItem("Synthèse numérique", "2-4", <FileExcelOutlined />),
+              getItem("Modélisation sémantique", "2-5", <LineChartOutlined />),
+
               //  {
               //   key:"2-4",
               //   label:"Synthèse numérique",
@@ -292,7 +329,7 @@ const DoctorDashboard = () => {
 
         const transformedData = transformGraphData(res.data);
         setGraphData(transformedData);
-        transformToJSONLD(transformedData.nodes, transformedData.links);
+       
         if (contenuChoisi === "CSV") {
           let columnsHistogramData = {};
 
@@ -412,7 +449,7 @@ const DoctorDashboard = () => {
   };
 
   const transformGraphData = (apiResponse) => {
-console.log("nodessss",apiResponse);
+    console.log("nodessss", apiResponse);
 
     const addedFiltrateNodes = new Set(); // Track Filtrate nodes that have been added
     const nodes = apiResponse.nodes.map((node) => ({
