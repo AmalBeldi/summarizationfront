@@ -2,12 +2,15 @@ import React, { useContext, useEffect, useState } from "react";
 import {
   ArrowLeftOutlined,
   BarChartOutlined,
+  CalendarOutlined,
+  EnvironmentOutlined,
   FileExcelOutlined,
   FileImageOutlined,
   FilePdfOutlined,
   FileTextOutlined,
   LineChartOutlined,
   LogoutOutlined,
+  MedicineBoxOutlined,
   PieChartOutlined,
   PLusCircleOutlined,
   SearchOutlined,
@@ -21,6 +24,7 @@ import {
   Col,
   ConfigProvider,
   DatePicker,
+  Input,
   Layout,
   Menu,
   Row,
@@ -44,7 +48,9 @@ const DoctorDashboard = () => {
   const { Content, Footer, Sider } = Layout;
   const [collapsed, setCollapsed] = useState(false);
   const [selectedItem, setSelectedItem] = useState("1");
-  const { dashboardItems } = useContext(GlobalContext);
+  const { dashboardItems, setDashboardItems } = useContext(GlobalContext);
+  const [spetialite, setSpetialite] = useState("");
+  const [lieuCon, setLieu] = useState("");
   const [legendData, setLegendData] = useState([
     { label: "Pdf", color: "#B3A492" },
     { label: "Image", color: "#DADDB1" },
@@ -80,30 +86,29 @@ const DoctorDashboard = () => {
           .pop()
           .toLowerCase()
       : "";
-    if (file_extension === "pdf") {
-      return "#B3A492";
-    } else if (["jpg", "jpeg", "png", "gif", "bmp"].includes(file_extension)) {
-      return "#DADDB1";
-    } else if (["xlsx", "xls", "csv"].includes(file_extension)) {
-      return "#A7D397";
-    } else if (["mp4", "avi", "mkv"].includes(file_extension)) {
-      return "#BEADFA";
-    } else {
-      return "#D8BFD8";
-    }
+      if (file_extension === "pdf") {
+        return "#B3A492";
+      } else if (["jpg", "jpeg", "png", "gif", "bmp"].includes(file_extension)) {
+        return "#DADDB1";
+      } else if (["xlsx", "xls", "csv","xlsm"].includes(file_extension)) {
+        return "#A7D397";
+      } else if (["mp4", "avi", "mkv"].includes(file_extension)) {
+        return "#BEADFA";
+      } else {
+        return "#D8BFD8";
+      }
   };
 
-  useEffect(()=>{
-    if(selectedItem==="2-5"){
+  useEffect(() => {
+    if (selectedItem === "2-5") {
       transformToJSONLD(graphData.nodes, graphData.links);
-      let data={email}
-
-      axios.post("http://127.0.0.1:5000/getOpenAiSummarize",data)
     }
 
-   
-
-  },[selectedItem])
+    if (selectedItem === "3.3") {
+      setDashboardItems("default");
+      setSelectedItem("1");
+    }
+  }, [selectedItem]);
 
   const sendJSONLDToBackend = async (jsonLDData) => {
     try {
@@ -127,44 +132,50 @@ const DoctorDashboard = () => {
           if (error) {
           } else if (quad) {
             const triple = {
-              subject: quad.subject instanceof NamedNode ? quad.subject.value : "",
-              predicate: quad.predicate instanceof NamedNode ? quad.predicate.value : "",
-              object: quad.object instanceof NamedNode ? quad.object.value : quad.object.value,
+              subject:
+                quad.subject instanceof NamedNode ? quad.subject.value : "",
+              predicate:
+                quad.predicate instanceof NamedNode ? quad.predicate.value : "",
+              object:
+                quad.object instanceof NamedNode
+                  ? quad.object.value
+                  : quad.object.value,
             };
-        
+
             rdfTriples.push(triple);
           } else {
             // Extract labels before mapping
             const nodeLabels = {};
             const edgeLabels = {};
-        
+
             rdfTriples.forEach((triple) => {
               const { subject, predicate, object } = triple;
-        
+
               // Extract label for nodes
               if (
-                predicate === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' &&
-                object !== 'http://semanticweb.org/neo4j/edge'
+                predicate ===
+                  "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" &&
+                object !== "http://semanticweb.org/neo4j/edge"
               ) {
                 const labelTriple = rdfTriples.find(
                   (t) =>
                     t.subject === subject &&
-                    t.predicate === 'http://semanticweb.org/neo4j/label'
+                    t.predicate === "http://semanticweb.org/neo4j/label"
                 );
-        
+
                 if (labelTriple && labelTriple.object) {
                   nodeLabels[subject] = labelTriple.object;
                 }
               }
-        
+
               // Extract label for edges
-              if (predicate === 'http://semanticweb.org/neo4j/edge') {
+              if (predicate === "http://semanticweb.org/neo4j/edge") {
                 const labelTriple = rdfTriples.find(
                   (t) =>
                     t.subject === subject &&
-                    t.predicate === 'http://semanticweb.org/neo4j/label'
+                    t.predicate === "http://semanticweb.org/neo4j/label"
                 );
-        
+
                 if (labelTriple && labelTriple.object) {
                   edgeLabels[subject] = labelTriple.object;
                 }
@@ -174,35 +185,43 @@ const DoctorDashboard = () => {
             const nodes = rdfTriples
               .filter(
                 (triple) =>
-                  triple.predicate === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' &&
-                  triple.object !== 'http://semanticweb.org/neo4j/edge'
+                  triple.predicate ===
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" &&
+                  triple.object !== "http://semanticweb.org/neo4j/edge"
               )
               .map((triple) => {
                 const { subject, object } = triple;
-                const lastSubject = subject.split('/');
+                const lastSubject = subject.split("/");
                 const lastPart = lastSubject[lastSubject.length - 1];
                 const label = nodeLabels[subject] || `Unknown (${lastPart})`;
-                return { id: lastPart, type: object, label, info: { name: label } };
+                return {
+                  id: lastPart,
+                  type: object,
+                  label,
+                  info: { name: label },
+                };
               });
-        
+
             const edges = rdfTriples
-              .filter((triple) => triple.predicate === 'http://semanticweb.org/neo4j/edge')
+              .filter(
+                (triple) =>
+                  triple.predicate === "http://semanticweb.org/neo4j/edge"
+              )
               .map((triple) => {
                 const { subject, object } = triple;
-                const lastSubject = subject.split('/');
+                const lastSubject = subject.split("/");
                 const lastPart = lastSubject[lastSubject.length - 1];
-                const lastObject = object.split('/');
+                const lastObject = object.split("/");
                 const lastPartObject = lastObject[lastObject.length - 1];
-                const edgeLabel = edgeLabels[subject] || 'Edge';
+                const edgeLabel = edgeLabels[subject] || "Edge";
                 return { from: lastPart, to: lastPartObject, label: edgeLabel };
               });
-        
+            setLoading(false);
             // Now you have nodes and edges with labels, you can use them as needed
             const transformedData = transformGraphData({ nodes, edges });
             setGraphData(transformedData);
           }
         });
-        
       } else {
         console.error(
           "Error sending JSON-LD data to the backend:",
@@ -215,7 +234,8 @@ const DoctorDashboard = () => {
   };
 
   const transformToJSONLD = (nodes, edges) => {
-    console.log(edges, "edg,eessss");
+    setLoading(true);
+
     const jsonLDData = {
       "@context": {
         label: "http://www.w3.org/2000/01/rdf-schema#label",
@@ -267,45 +287,70 @@ const DoctorDashboard = () => {
           getItem("Se déconnecter", "3", <LogoutOutlined />),
         ]
       : [
-          // getItem('Liste des patients', '1', <UserOutlined />),
           {
-            key: "2",
+            key: "1",
             label: "Synthèse des données",
             icon: <PieChartOutlined />,
             children: [
               getItem("Synthèse basique", "2-1", <PieChartOutlined />),
-              getItem("Synthèse avancée", "2-2", <BarChartOutlined />),
-              getItem(
-                "Synthèse basée sur le contenu",
-                "2-3",
-                <FileTextOutlined />
-              ),
-              getItem("Synthèse numérique", "2-4", <FileExcelOutlined />),
-              getItem("Modélisation sémantique", "2-5", <LineChartOutlined />),
+              {
+                key: "2-2",
+                label: "Synthèse avancée",
+                icon: <FileTextOutlined />,
+                children: [
+                  getItem("Synthèse par date", "2-2-1", <CalendarOutlined />),
+                  getItem(
+                    "Synthèse par localité",
+                    "2-2-2",
+                    <EnvironmentOutlined />
+                  ),
+                  getItem(
+                    "Synthèse par spécialité",
+                    "2-2-3",
+                    <MedicineBoxOutlined />
+                  ),
+                ],
+              },
 
-              //  {
-              //   key:"2-4",
-              //   label:"Synthèse numérique",
-              //   icon:<FileExcelOutlined />,
-              //   children:[
-              //     getItem("Synthètiser la mesure maximale", "2-4-1", <PieChartOutlined />),
-              //   getItem("Synthètiser la mesure minimale", "2-4-2", <BarChartOutlined />),
-              //   getItem(
-              //     "Synthètiser la mesure moyenne",
-              //     "2-4-3",
-              //     <FileTextOutlined />
-              //   ),
-              //   getItem(
-              //     "Synthètiser une courbe de variation des mesures à interpréter",
-              //     "2-4-3",
-              //     <FileTextOutlined />
-              //   ),
-              //   ]
-              //  }
+              {
+                key: "2-3",
+                label: "Synthèse basée sur le contenu",
+                icon: <FileTextOutlined />,
+                children: [
+                  {
+                    key: "2-3-1",
+                    label: "Synthèse textuelle",
+                    children: [
+                      getItem(
+                        "Synthése extractive",
+                        "2-3-1-1",
+                        <BarChartOutlined />
+                      ),
+                      getItem(
+                        "Synthése abstractive",
+                        "2-3-1-2",
+                        <BarChartOutlined />
+                      ),
+                      getItem(
+                        "Synthése basée sur openai",
+                        "2-3-1-3",
+                        <BarChartOutlined />
+                      ),
+                    ],
+                  },
+                  getItem("Synthèse numérique", "2-3-2", <FileExcelOutlined />),
+                ],
+              },
+
+              // getItem("Synthèse numérique", "2-4", <FileExcelOutlined />),
+              getItem("Modélisation sémantique", "2-5", <LineChartOutlined />),
             ],
           },
           getItem("versionning", "3", <UserOutlined />),
+
+          getItem("Liste des patients", "3.3", <UserOutlined />),
           getItem("Se déconnecter", "4", <LogoutOutlined />),
+
           // getItem("RDF","5")
         ];
 
@@ -314,76 +359,88 @@ const DoctorDashboard = () => {
     navigate("/login");
     localStorage.clear();
     sessionStorage.clear();
+    setDashboardItems("default");
   };
 
   const getGraphByContenu = () => {
     setLoading(true);
 
-    axios
-      .post(`http://127.0.0.1:5000/topic/multiple`, {
-        email: email,
-        algo: contenuChoisi,
-      })
-      .then((res) => {
-        setLoading(false);
+    contenuChoisi !== "openAi"
+      ? axios
+          .post(`http://127.0.0.1:5000/topic/multiple`, {
+            email: email,
+            algo: contenuChoisi,
+          })
+          .then((res) => {
+            setLoading(false);
 
-        const transformedData = transformGraphData(res.data);
-        setGraphData(transformedData);
-       
-        if (contenuChoisi === "CSV") {
-          let columnsHistogramData = {};
+            const transformedData = transformGraphData(res.data);
+            setGraphData(transformedData);
 
-          transformedData.nodes.forEach((node) => {
-            // if (node.group === "Column") {
-            const columnId = node.id;
-            const minNode = transformedData.nodes.find(
-              (n) => n.id === `Min_${columnId}`
-            );
+            if (contenuChoisi === "CSV") {
+              let columnsHistogramData = {};
 
-            const maxNode = transformedData.nodes.find(
-              (n) => n.id === `Max_${columnId}`
-            );
-            const avgNode = transformedData.nodes.find(
-              (n) => n.id === `Average_${columnId}`
-            );
+              transformedData.nodes.forEach((node) => {
+                // if (node.group === "Column") {
+                const columnId = node.id;
+                const minNode = transformedData.nodes.find(
+                  (n) => n.id === `Min_${columnId}`
+                );
 
-            if (minNode && maxNode && avgNode) {
-              columnsHistogramData[columnId] = {
-                labels: ["Min", "Max", "Average"],
-                datasets: [
-                  {
-                    label: node.info.name,
-                    backgroundColor: [
-                      "rgba(255, 99, 132, 0.2)",
-                      "rgba(54, 162, 235, 0.2)",
-                      "rgba(255, 206, 86, 0.2)",
+                const maxNode = transformedData.nodes.find(
+                  (n) => n.id === `Max_${columnId}`
+                );
+                const avgNode = transformedData.nodes.find(
+                  (n) => n.id === `Average_${columnId}`
+                );
+
+                if (minNode && maxNode && avgNode) {
+                  columnsHistogramData[columnId] = {
+                    labels: ["Min", "Max", "Average"],
+                    datasets: [
+                      {
+                        label: node.info.name,
+                        backgroundColor: [
+                          "rgba(255, 99, 132, 0.2)",
+                          "rgba(54, 162, 235, 0.2)",
+                          "rgba(255, 206, 86, 0.2)",
+                        ],
+                        borderColor: [
+                          "rgba(255, 99, 132, 1)",
+                          "rgba(54, 162, 235, 1)",
+                          "rgba(255, 206, 86, 1)",
+                        ],
+                        borderWidth: 1,
+                        data: [
+                          minNode.info.name,
+                          maxNode.info.name,
+                          avgNode.info.name,
+                        ],
+                      },
                     ],
-                    borderColor: [
-                      "rgba(255, 99, 132, 1)",
-                      "rgba(54, 162, 235, 1)",
-                      "rgba(255, 206, 86, 1)",
-                    ],
-                    borderWidth: 1,
-                    data: [
-                      minNode.info.name,
-                      maxNode.info.name,
-                      avgNode.info.name,
-                    ],
-                  },
-                ],
-              };
-              // }
+                  };
+                  // }
+                }
+              });
+
+              setHistogramData(columnsHistogramData);
             }
+          })
+          .catch((e) => {
+            setLoading(false);
+
+            console.log(e);
+          })
+      : axios
+          .post("http://127.0.0.1:5000/getOpenAiSummarize", {
+            email: email,
+          })
+          .then((res) => {
+            setLoading(false);
+
+            const transformedData = transformGraphData(res.data);
+            setGraphData(transformedData);
           });
-
-          setHistogramData(columnsHistogramData);
-        }
-      })
-      .catch((e) => {
-        setLoading(false);
-
-        console.log(e);
-      });
   };
   // const onClickNode = (node) => {
   //   console.log(node);
@@ -468,15 +525,23 @@ const DoctorDashboard = () => {
           : node.group === "class"
           ? "#DCDCDC"
           : node.group === "Extract"
-          ? "#DB7093"
+          ? "#DB7093" : 
+           node.group==="Abstract"?"#6495ED" :node.group==="Transformate"?"#DAA520"
           : classify_document(node.label),
       symbolType:
         node.group === "filtrate" ||
         node.group === "display" ||
-        node.group === "Extract"
+        node.group === "Extract" || node.group==="Abstract" || node.group==="Transformate"
           ? "diamond"
+          : node.group === "summary"
+          ? "square"
           : "",
-      size: node.group === "filtrate" || node.group === "display" ? 700 : 3000,
+      size:
+        node.group === "summary"
+          ? node?.info?.name.length * 20
+          : node.group === "filtrate" || node.group === "display"
+          ? 700
+          : 3000,
       labelText:
         node.group === "patient"
           ? `${node.info.nom} ${node.info.prenom}`
@@ -600,13 +665,26 @@ const DoctorDashboard = () => {
     }
   };
 
-  const getGraphByDate = () => {
+  const getGraphByDate = (type) => {
     setLoading(true);
+    let params = {
+      patient_email: email,
+      type: type,
+    };
+
+    if (type === "date") {
+      params.start_date = dateDebut;
+      params.end_date = dateFin;
+    } else if (type === "spetialite") {
+      params.spetialite = spetialite;
+    } else if (type === "locality") {
+      params.locality = lieuCon;
+    }
 
     axios
-      .get(
-        `/documents_by_date_range?patient_email=${email}&start_date=${dateDebut}&end_date=${dateFin}`
-      )
+      .get("/documents_by_criteria", {
+        params: params,
+      })
       .then((res) => {
         const transformedData = transformGraphData(res.data);
         setGraphData(transformedData);
@@ -679,11 +757,19 @@ const DoctorDashboard = () => {
               style={{ flex: 1 }} // Expand to fill remaining space
             />
 
-            {(selectedItem === "2-1" ||
+            {(selectedItem === "1" ||
+              selectedItem === "2-1" ||
               selectedItem === "2-2" ||
               selectedItem === "2-3" ||
               selectedItem === "2-4" ||
-              selectedItem === "4") &&
+              selectedItem === "4" ||
+              selectedItem === "2-3-1" ||
+              selectedItem === "2-3-2" ||
+              selectedItem === "2-2-1" ||
+              selectedItem === "2-2-2" ||
+              selectedItem === "2-2-3" ||
+              selectedItem === "2-3-1-1" ||
+              selectedItem === "2-3-1-2" || selectedItem==="2-3-1-3") &&
               dashboardItems !== "default" && (
                 <div style={{ marginLeft: "1rem", marginBottom: "1rem" }}>
                   <h3>Légende explicative de DEP</h3>
@@ -728,7 +814,14 @@ const DoctorDashboard = () => {
               selectedItem === "2-2" ||
               selectedItem === "2-3" ||
               selectedItem === "2-4" ||
-              selectedItem === "4") && (
+              selectedItem === "4" ||
+              selectedItem === "2-3-1" ||
+              selectedItem === "2-3-2" ||
+              selectedItem === "2-2-1" ||
+              selectedItem === "2-2-2" ||
+              selectedItem === "2-2-3" ||
+              selectedItem === "2-3-1-1" ||
+              selectedItem === "2-3-1-2" || selectedItem==="2-3-1-3") && (
               <Header
                 style={{
                   display: "flex",
@@ -802,7 +895,7 @@ const DoctorDashboard = () => {
                     </div>
                   )}
 
-                  {selectedItem === "2-2" && (
+                  {selectedItem === "2-2-1" && (
                     <div
                       style={{
                         display: "flex",
@@ -823,12 +916,51 @@ const DoctorDashboard = () => {
                           setDateFin(dayjs(e).format("YYYY-MM-DD"))
                         }
                       />
-                      <Button onClick={getGraphByDate}>
+
+                      <Button onClick={() => getGraphByDate("date")}>
                         <SearchOutlined />
                       </Button>
                     </div>
                   )}
-                  {selectedItem === "2-3" && (
+                  {selectedItem === "2-2-2" && (
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "start",
+                        width: "100%",
+                      }}
+                    >
+                      <Input
+                        placeholder="loclaité"
+                        onChange={(e) => setLieu(e.target.value)}
+                      />
+
+                      <Button onClick={() => getGraphByDate("locality")}>
+                        <SearchOutlined />
+                      </Button>
+                    </div>
+                  )}
+                  {selectedItem === "2-2-3" && (
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "start",
+                        width: "100%",
+                      }}
+                    >
+                      <Input
+                        placeholder="spécialité"
+                        onChange={(e) => setSpetialite(e.target.value)}
+                      />
+
+                      <Button onClick={() => getGraphByDate("spetialite")}>
+                        <SearchOutlined />
+                      </Button>
+                    </div>
+                  )}
+                  {selectedItem === "2-3-1-1" && (
                     <div
                       style={{
                         width: "100%",
@@ -871,6 +1003,20 @@ const DoctorDashboard = () => {
                 <FileExcelOutlined />
                 Synthèse numérique
               </Button> */}
+                      
+                     
+                      <Button onClick={getGraphByContenu}>
+                        <SearchOutlined />
+                      </Button>
+                    </div>
+                  )}
+
+
+                  {
+                    selectedItem==="2-3-1-2" && (
+                      <div style={{
+                        width: "100%",
+                      }}>
                       <Button
                         style={{
                           backgroundColor:
@@ -884,6 +1030,7 @@ const DoctorDashboard = () => {
                         <FileExcelOutlined />
                         Synthèse basée sur la prédiction(Graph based)
                       </Button>
+                     
                       <Button
                         style={{
                           backgroundColor:
@@ -899,13 +1046,14 @@ const DoctorDashboard = () => {
                         <FileExcelOutlined />
                         Synthèse basée sur la prédiction(Tree based)
                       </Button>
-
                       <Button onClick={getGraphByContenu}>
                         <SearchOutlined />
                       </Button>
-                    </div>
-                  )}
-                  {selectedItem === "2-4" && (
+                      </div>
+                    )
+                  }
+
+                  {selectedItem === "2-3-2" && (
                     <div
                       style={{
                         width: "100%",
@@ -952,7 +1100,7 @@ const DoctorDashboard = () => {
                         <FileExcelOutlined />
                         Synthètiser la mesure moyenne
                       </Button>
-                      <Button
+                      {/* <Button
                         style={{
                           backgroundColor:
                             contenuChoisi === "TREE_BASED"
@@ -967,13 +1115,34 @@ const DoctorDashboard = () => {
                         <FileExcelOutlined />
                         Synthètiser une courbe de variation des mesures à
                         interpréter
-                      </Button>
+                      </Button> */}
 
                       <Button onClick={getGraphByContenu}>
                         <SearchOutlined />
                       </Button>
                     </div>
                   )}
+                  {
+                    selectedItem==="2-3-1-3" && (
+                      <div style={{width:"100%"}}>
+                      <Button
+                      style={{
+                        backgroundColor:
+                          contenuChoisi === "openAi"
+                            ? "#C7D2DC"
+                            : "transparent",
+                        border: "none",
+                      }}
+                      onClick={() => onChangeContenu("openAi")}
+                    >
+                      <FileExcelOutlined />
+                      OpenAi
+                    </Button>
+                    <Button onClick={getGraphByContenu}>
+                      <SearchOutlined />
+                    </Button></div>
+                    )
+                  }
 
                   {selectedItem === "4" && !loading && (
                     <div

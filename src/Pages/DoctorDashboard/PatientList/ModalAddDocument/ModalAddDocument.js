@@ -1,4 +1,4 @@
-import { Button, Col, Modal, Row, notification } from "antd";
+import { Button, Col, Form, Input, Modal, Row, notification } from "antd";
 import Dragger from "antd/es/upload/Dragger";
 import React, { useState } from "react";
 import { InboxOutlined } from "@ant-design/icons";
@@ -7,6 +7,8 @@ import axios from "axios";
 const ModalAddDocument = (props) => {
   const { isModalOpen, setIsModalOpen, user } = props;
   const [files, setFiles] = useState([]);
+const [spetialite,setSpetialite]=useState("")
+const [lieuCon,setLieu]=useState("")
 
   const dummyRequest = ({ onSuccess }) => {
     setTimeout(() => {
@@ -25,6 +27,8 @@ const ModalAddDocument = (props) => {
       f.append("document_file", file.originFileObj);
       f.append("email", user.email);
       f.append("document_name", file.name);
+      f.append("lieu_cons",lieuCon)
+      f.append("spetialite",spetialite)
 
       axios
         .post("http://127.0.0.1:5000/add_document", f, {
@@ -54,7 +58,7 @@ const ModalAddDocument = (props) => {
         }}
       >
         <Col
-          style={{ marginTop: "2rem", fontSize: "1.5rem", fontWeight: "600" }}
+          style={{ marginBlock: "2rem", fontSize: "1.5rem", fontWeight: "600" }}
         >
           <span>
             Ajouter documents pour le patient {user.nom} {user.prenom}{" "}
@@ -79,8 +83,8 @@ const ModalAddDocument = (props) => {
             //   });
             //   return false; // Prevent the file from being uploaded
             // } else {
-              //   handleChange1(e, type);
-              setFiles(e);
+            //   handleChange1(e, type);
+            setFiles(e);
             // }
           }}
           customRequest={dummyRequest}
@@ -93,6 +97,23 @@ const ModalAddDocument = (props) => {
             Cliquez ici ou bien drag-and-drop vos documents.
           </p>
         </Dragger>
+        <Form.Item
+          label="Lieu de la consultation"
+          name="lieu_cons"
+          required
+          style={{ margin: "2rem" }}
+        >
+          <Input onChange={(e)=>setLieu(e.target.value)} />
+        </Form.Item>
+
+        <Form.Item
+          label="Spétialité de la consultation"
+          name="docteur"
+          required
+        >
+          <Input onChange={(e)=>setSpetialite(e.target.value)} />
+        </Form.Item>
+
         <Button onClick={uploadFiles} className={classes.btnAdd}>
           Ajouter Document(s)
         </Button>

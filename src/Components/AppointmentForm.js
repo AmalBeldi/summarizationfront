@@ -68,35 +68,10 @@ function AppointmentForm() {
     })
     .then((response) => {
       sessionStorage.setItem("token", response.data.access_token);
-      // if(form.getFieldsValue()['typeLogin']==="Patient"){
-      //     let patientInfo={
-      //         email:form.getFieldsValue()["email"],
-      //         nom:response.data.name,
-      //         prenom:response.data.prenom,
-      //         age:response.data.age,
-      //         adresse:response.data.adresse,
-      //         téléphone:response.data.telephone,
-      //         sexe:response.data.sexe
-      //     }
 
-      //     form.setFieldsValue({
-      //         ...form.getFieldsValue(),
-      //         civilite:response.data.sexe==="female"?"Mme":"Mr",
-      //         nom:response.data.name,
-      //         prenom:response.data.prenom,
-      //         age:response.data.age,
-      //         adresse:response.data.adresse,
-      //         téléphone:response.data.telephone,
-      //         email:form.getFieldsValue()["email"]
-      //     })
-
-      //     sessionStorage.setItem("patientInfo",JSON.stringify(patientInfo))
-      //     navigate("/PatientDashboard")
-      // }
-      // else{
 
           navigate("/DoctorDashboard");
-      // }
+
     })
     .catch((err) => console.log(err));
 

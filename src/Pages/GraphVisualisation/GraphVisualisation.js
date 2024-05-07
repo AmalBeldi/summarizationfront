@@ -36,7 +36,7 @@ import { Network } from 'react-vis-network';
 
 const GraphVisualisation = (props) => {
   const { email, selectedItem,graphData,setGraphData,onChangeContenu ,getGraphByContenu} = props;
-  // const [graphData, setGraphData] = useState({ nodes: [], edges: [] });
+  // const [graphData, setGraphData] = useState({ nodes: [], edges: [] });d3
   const { loading, setLoading } = useContext(GlobalContext);
   const [collapsed, setCollapsed] = useState(false);
   const [listTypes, setListTypes] = useState([]);
@@ -62,11 +62,12 @@ const GraphVisualisation = (props) => {
           .pop()
           .toLowerCase()
       : "";
+      console.log(file_extension);
     if (file_extension === "pdf") {
       return "#B3A492";
     } else if (["jpg", "jpeg", "png", "gif", "bmp"].includes(file_extension)) {
       return "#DADDB1";
-    } else if (["xlsx", "xls", "csv"].includes(file_extension)) {
+    } else if (["xlsx", "xls", "csv","xlsm"].includes(file_extension)) {
       return "#A7D397";
     } else if (["mp4", "avi", "mkv"].includes(file_extension)) {
       return "#BEADFA";
@@ -141,7 +142,6 @@ const GraphVisualisation = (props) => {
 
   useEffect(() => {
     selectedItem === "3" && getVersions();
-
   }, [selectedItem]);
 
   useEffect(() => {
@@ -345,6 +345,7 @@ const GraphVisualisation = (props) => {
       labelProperty: "labelText",
       labelPosition: "center",
       wordWrap: true,
+      wrapText: true,
       onClick: onClickNode,
     },
     d3: {

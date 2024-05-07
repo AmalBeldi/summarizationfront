@@ -8,6 +8,7 @@ import { DeleteOutlined } from "@ant-design/icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faUser } from "@fortawesome/free-solid-svg-icons";
 import GlobalContext from "../../../../context/GlobalContext";
+import axios from "axios"
 const UserCard = (props) => {
   const navigate = useNavigate();
   const { user, index } = props;
@@ -16,7 +17,11 @@ const UserCard = (props) => {
     setIsModalOpen(true);
   };
   const { setDashboardItems } = useContext(GlobalContext);
-  console.log(setDashboardItems);
+  const deletePatient=()=>{
+    axios.delete(`http://127.0.0.1:5000/patients/${user?.id}`).then(()=>{
+      window.location.reload()
+    })
+  }
   return (
     <>
       <ModalAddDocument
@@ -33,7 +38,7 @@ const UserCard = (props) => {
           }}
         >
           <span className={classes.age}>{user.age}ans</span>
-          {
+          {/* {
             <FontAwesomeIcon
               icon={faTrash}
               style={{
@@ -43,8 +48,9 @@ const UserCard = (props) => {
                 border: "1px solid #E00000",
                 borderRadius: "0.3rem",
               }}
+              onClick={deletePatient}
             />
-          }
+          } */}
         </Row>
         <Row
           style={{
@@ -79,11 +85,7 @@ const UserCard = (props) => {
             onClick={() => {
               setDashboardItems("patient");
               sessionStorage.setItem("user",JSON.stringify(user))
-              // navigate("/graph", {
-              //   state: {
-              //     email: user?.email,
-              //   },
-              // });
+             
             }}
           >
             Accéder
