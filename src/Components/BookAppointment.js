@@ -22,8 +22,8 @@ function BookAppointment() {
       </div> */}
 
       <div className="ba-text-content">
-        <h3 className="ba-title">
-          <span>Pourquoi choisir OpenCEMS</span>
+        <h3 className="ba-title"> 
+          <span>Pourquoi choisir DG_Summ</span>
         </h3>
         <p className="ba-description">
           Découvrez les raisons de choisir OpenCEMS pour vos besoins. Bénéficiez de commodité

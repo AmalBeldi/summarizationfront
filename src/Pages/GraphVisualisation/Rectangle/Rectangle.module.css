@@ -1,0 +1,59 @@
+.ModalSuccess {
+  padding: 2rem;
+}
+.modalRow {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+}
+.Felicitations {
+  color: #0b0b0b;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.souscription {
+  margin-top: 0.5rem;
+  margin-bottom: 2rem;
+  color: #0b0b0b;
+  font-size: 0.8rem;
+  font-weight: 400;
+}
+
+.emailContrat {
+  margin-top: 2rem;
+  color: #0b0b0b;
+  font-size: 0.8rem;
+  font-weight: 400;
+}
+
+.remerciement {
+  margin-bottom: 2rem;
+  color: #0b0b0b;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.nouveauSousc {
+  border-radius: 0.5rem;
+  background-color: #ff422c;
+  color: #fff;
+  font-weight: 600;
+  /* padding-inline: 3rem; */
+}
+
+.buttonStyle {
+  background-color: #2D6C8C;
+  border-radius: 12px;
+  border: none;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  text-align: center;
+  /* padding: 0.6rem 1.8rem; */
+  color: white;
+  cursor: pointer;
+  margin-bottom: 0.5rem;
+  margin-block: 1rem;
+}

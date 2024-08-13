@@ -32,10 +32,19 @@ import { Bar } from "react-chartjs-2";
 import HistogramChart from "./HistogramChart/HIstogramChart";
 import Loader from "../../Components/Loader/Loader";
 import GlobalContext from "../../context/GlobalContext";
-import { Network } from 'react-vis-network';
+import { Network } from "react-vis-network";
+import Rectangle from "./Rectangle/Rectangle";
+import ResponseTimeGraph from "../../Components/ResponseTimeGraph";
 
 const GraphVisualisation = (props) => {
-  const { email, selectedItem,graphData,setGraphData,onChangeContenu ,getGraphByContenu} = props;
+  const {
+    email,
+    selectedItem,
+    graphData,
+    setGraphData,
+    onChangeContenu,
+    getGraphByContenu,
+  } = props;
   // const [graphData, setGraphData] = useState({ nodes: [], edges: [] });d3
   const { loading, setLoading } = useContext(GlobalContext);
   const [collapsed, setCollapsed] = useState(false);
@@ -50,6 +59,8 @@ const GraphVisualisation = (props) => {
   const [histogramData, setHistogramData] = useState({});
   const [queryName, setQueryName] = useState([]);
   const labels = ["Min", "Max", "Average"];
+  const [open,setOpen]=useState(false)
+  const [summmary,setSummary]=useState("")
   // const values = [data.min, data.max, data.avg];
 
   // const onChangeContenu = (e) => {
@@ -62,12 +73,12 @@ const GraphVisualisation = (props) => {
           .pop()
           .toLowerCase()
       : "";
-      console.log(file_extension);
+    console.log(file_extension);
     if (file_extension === "pdf") {
       return "#B3A492";
     } else if (["jpg", "jpeg", "png", "gif", "bmp"].includes(file_extension)) {
       return "#DADDB1";
-    } else if (["xlsx", "xls", "csv","xlsm"].includes(file_extension)) {
+    } else if (["xlsx", "xls", "csv", "xlsm"].includes(file_extension)) {
       return "#A7D397";
     } else if (["mp4", "avi", "mkv"].includes(file_extension)) {
       return "#BEADFA";
@@ -77,53 +88,58 @@ const GraphVisualisation = (props) => {
   };
   const sendJSONLDToBackend = async (jsonLDData) => {
     try {
-      const response = await fetch('http://127.0.0.1:5000/patient/transformToRDF', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(jsonLDData),
-      });
-  
+      const response = await fetch(
+        "http://127.0.0.1:5000/patient/transformToRDF",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(jsonLDData),
+        }
+      );
+
       if (response.ok) {
-        console.log('JSON-LD data sent successfully!');
+        console.log("JSON-LD data sent successfully!");
         // Optionally handle the response from the backend
       } else {
-        console.error('Error sending JSON-LD data to the backend:', response.statusText);
+        console.error(
+          "Error sending JSON-LD data to the backend:",
+          response.statusText
+        );
       }
     } catch (error) {
-      console.error('Error sending JSON-LD data to the backend:', error);
+      console.error("Error sending JSON-LD data to the backend:", error);
     }
   };
-  
+
   const transformToJSONLD = (nodes, edges) => {
     console.log(edges);
     const jsonLDData = {
       "@context": {
-        "label": "http://www.w3.org/2000/01/rdf-schema#label",
-        "type": "@type",
-        "nodes": "http://example.org/graph#nodes",
-        "edges": "http://example.org/graph#edges"
+        label: "http://www.w3.org/2000/01/rdf-schema#label",
+        type: "@type",
+        nodes: "http://example.org/graph#nodes",
+        edges: "http://example.org/graph#edges",
       },
-      nodes: nodes.map(node => ({
+      nodes: nodes.map((node) => ({
         "@id": node.id,
         label: node.label,
-        type: "Node"  // You can customize the type
+        type: "Node", // You can customize the type
         // Add more properties as needed
       })),
-      edges: edges.map(edge => ({
-        "@id":  edge.from+'-'+edge.to,
+      edges: edges.map((edge) => ({
+        "@id": edge.from + "-" + edge.to,
         source: edge.from,
         target: edge.to,
-        type: "edge"  // You can customize the type
+        type: "edge", // You can customize the type
         // Add more properties as needed
-      }))
+      })),
     };
 
-   console.log(JSON.stringify(jsonLDData));
+    console.log(JSON.stringify(jsonLDData));
     sendJSONLDToBackend(jsonLDData);
   };
-  
 
   const getVersions = () => {
     setLoading(true);
@@ -152,7 +168,6 @@ const GraphVisualisation = (props) => {
         const transformedData = transformGraphData(response.data);
         setGraphData(transformedData);
         response && setLoading(false);
-        
       } catch (error) {
         setLoading(false);
         console.error("Error fetching graph data:", error);
@@ -160,8 +175,6 @@ const GraphVisualisation = (props) => {
     };
 
     fetchData();
-
-    
   }, []);
 
   // useEffect(() => {
@@ -172,48 +185,53 @@ const GraphVisualisation = (props) => {
   // }, [graphData]);
 
   const onClickNode = (node) => {
-    console.log(node);
-    axios
-      .get(`http://127.0.0.1:5000/get_node_info/${node}`)
-      .then((res) => {
-        //  if(res.data?.labels[0]==="Filtrate"){
-        //   axios.get(`/document_types_graph?patient_email=${email}`).then((res)=>{
-        //     const transformedData = transformGraphData(res.data);
-        //       // console.log(res.data);
-        //       setGraphData(transformedData);
-        //   })
-        //  }
 
-        if (res.data?.labels[0] === "Patient") {
-          setPredictPatient(true);
-        }
 
-        if (res.data.labels[0] === "Document") {
-          fetch(res.data.properties.filepath)
-            .then((response) => response.blob())
-            .then((blob) => {
-              return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onloadend = () => resolve(reader.result);
-                reader.onerror = reject;
-                reader.readAsDataURL(blob);
-              });
-            });
-          // console.log("lkj",res.data);
-        }
+    let summary=JSON.parse(sessionStorage.getItem("summaries"))
+    if(summary){
+      setOpen(true)
 
-        if (res.data.labels[0] === "Version") {
-          console.log(JSON.parse(res.data.properties.version));
-          const transformedData = transformGraphData({
-            nodes: JSON.parse(res.data.properties.version).nodes,
-            edges: JSON.parse(res.data.properties.version).edges,
-          });
-          setGraphData(transformedData);
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+      let node_summary=summary.find((e)=>e.id==node)
+      if(node_summary){
+        setSummary(node_summary?.summary)
+      }
+      
+    }
+     
+    // axios
+    //   .get(`http://127.0.0.1:5000/get_node_info/${node}`)
+    //   .then((res) => {
+     
+    //     if (res.data?.labels[0] === "Patient") {
+    //       setPredictPatient(true);
+    //     }
+
+    //     if (res.data.labels[0] === "Document") {
+    //       fetch(res.data.properties.filepath)
+    //         .then((response) => response.blob())
+    //         .then((blob) => {
+    //           return new Promise((resolve, reject) => {
+    //             const reader = new FileReader();
+    //             reader.onloadend = () => resolve(reader.result);
+    //             reader.onerror = reject;
+    //             reader.readAsDataURL(blob);
+    //           });
+    //         });
+    //       // console.log("lkj",res.data);
+    //     }
+
+    //     if (res.data.labels[0] === "Version") {
+    //       console.log(JSON.parse(res.data.properties.version));
+    //       const transformedData = transformGraphData({
+    //         nodes: JSON.parse(res.data.properties.version).nodes,
+    //         edges: JSON.parse(res.data.properties.version).edges,
+    //       });
+    //       setGraphData(transformedData);
+    //     }
+    //   })
+    //   .catch((e) => {
+    //     console.log(e);
+    //   });
   };
 
   const getGraphByType = () => {
@@ -258,9 +276,11 @@ const GraphVisualisation = (props) => {
       symbolType:
         node.group === "filtrate" ||
         node.group === "display" ||
-        node.group === "Extract"
-          ? "diamond"
-          : "",
+        node.group === "Extract" ? (
+          "diamond"
+        ) :  (
+          ""
+        ),
       size: node.group === "filtrate" || node.group === "display" ? 700 : 3000,
       labelText:
         node.group === "patient"
@@ -269,6 +289,8 @@ const GraphVisualisation = (props) => {
           ? "Filtrate"
           : node.group === "display"
           ? "Display"
+          : node.group === "summary"
+          ? node.info.name.replace(/(.{50})/g, "$1\n")
           : node.info.name,
       info: node.info,
     }));
@@ -489,8 +511,11 @@ const GraphVisualisation = (props) => {
   //   });
   // };
 
+  
   return (
     <>
+
+    <Rectangle open={open} setOpen={setOpen} summmary={summmary}  />
       <div>
         <ChatBoot />
 
@@ -509,12 +534,10 @@ const GraphVisualisation = (props) => {
           style={{ display: "flex", flexDirection: "column" }}
           className={classes.container}
         >
-
           {/* {!loading  && 
           <Network graph={rdfGraph} options={{ layout: { hierarchical: false } }} />
 
           } */}
-    
 
           {!loading ? (
             <Row>
@@ -531,11 +554,14 @@ const GraphVisualisation = (props) => {
                   id="graph-id"
                   data={graphData}
                   config={graphConfig}
-                  style={{ height: "80vh" }}
+                  style={{ height: "80vh", whiteSpace: "pre-wrap" }}
                   onClickNode={onClickNode}
-                  
                 />
-                 {histogramData && <HistogramChart histogramData={histogramData} />} 
+                    {/* <ResponseTimeGraph /> */}
+
+                {/* {histogramData && (
+                  <HistogramChart histogramData={histogramData} />
+                )} */}
               </div>
             </Row>
           ) : (

@@ -53,7 +53,7 @@ const PatientList = () => {
             flexDirection: "row",
           }}
         >
-          <Input.Search
+          {/* <Input.Search
             onSearch={(value) => setSearchText(value)}
             placeholder="Rechercher un patient"
             onChange={(e) => {
@@ -61,7 +61,7 @@ const PatientList = () => {
                 setSearchText("");
               }
             }}
-          />
+          /> */}
 
           {filterUsers().map((user, index) => (
             <UserCard key={index} user={user} index={index} />

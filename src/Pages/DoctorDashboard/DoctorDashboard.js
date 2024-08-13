@@ -43,6 +43,7 @@ import axios from "axios";
 import dayjs from "dayjs";
 import N3 from "n3";
 import rdfParser from "rdf-parse";
+import Rectangle from "../GraphVisualisation/Rectangle/Rectangle";
 
 const DoctorDashboard = () => {
   const { Content, Footer, Sider } = Layout;
@@ -55,8 +56,38 @@ const DoctorDashboard = () => {
     { label: "Pdf", color: "#B3A492" },
     { label: "Image", color: "#DADDB1" },
     { label: "CSV", color: "#A7D397" },
-    // {label:"Vidéo",color:"#BEADFA"},
     { label: "Patient", color: "lightblue" },
+    { label: "Filtrate", color:"green" },
+    { label: "Display", color: "#b00d49" },
+    { label: "Extract", color: "#DB7093" },
+    { label: "Abstract", color:"#6495ED" },
+    { label: "Transform", color: "#DAA520" },
+    { label: "Class", color: "#DCDCDC" },
+    { label: "Word", color: "#D8BFD8" },
+    { label: "Column", color: "#3271e7" },
+
+
+    
+
+    
+
+
+
+    
+
+
+
+    
+
+
+
+  
+
+
+  
+
+
+
     // Add more legend items as needed
   ]);
   let email = JSON.parse(sessionStorage.getItem("user"))?.email;
@@ -86,17 +117,17 @@ const DoctorDashboard = () => {
           .pop()
           .toLowerCase()
       : "";
-      if (file_extension === "pdf") {
-        return "#B3A492";
-      } else if (["jpg", "jpeg", "png", "gif", "bmp"].includes(file_extension)) {
-        return "#DADDB1";
-      } else if (["xlsx", "xls", "csv","xlsm"].includes(file_extension)) {
-        return "#A7D397";
-      } else if (["mp4", "avi", "mkv"].includes(file_extension)) {
-        return "#BEADFA";
-      } else {
-        return "#D8BFD8";
-      }
+    if (file_extension === "pdf") {
+      return "#B3A492";
+    } else if (["jpg", "jpeg", "png", "gif", "bmp"].includes(file_extension)) {
+      return "#DADDB1";
+    } else if (["xlsx", "xls", "csv", "xlsm"].includes(file_extension)) {
+      return "#A7D397";
+    } else if (["mp4", "avi", "mkv"].includes(file_extension)) {
+      return "#BEADFA";
+    } else {
+      return "#D8BFD8";
+    }
   };
 
   useEffect(() => {
@@ -440,6 +471,25 @@ const DoctorDashboard = () => {
 
             const transformedData = transformGraphData(res.data);
             setGraphData(transformedData);
+            let summaries=[]
+
+
+
+            transformedData?.nodes?.map((node)=>{
+              if(node.label==="Summary"){
+                console.log("node",node);
+               summaries.push({
+                "id":node.id,
+                "summary":node.info.name,
+               })
+              }
+            })
+
+            sessionStorage.setItem("summaries",JSON.stringify(summaries))
+
+
+
+      
           });
   };
   // const onClickNode = (node) => {
@@ -506,7 +556,6 @@ const DoctorDashboard = () => {
   };
 
   const transformGraphData = (apiResponse) => {
-    console.log("nodessss", apiResponse);
 
     const addedFiltrateNodes = new Set(); // Track Filtrate nodes that have been added
     const nodes = apiResponse.nodes.map((node) => ({
@@ -525,16 +574,20 @@ const DoctorDashboard = () => {
           : node.group === "class"
           ? "#DCDCDC"
           : node.group === "Extract"
-          ? "#DB7093" : 
-           node.group==="Abstract"?"#6495ED" :node.group==="Transformate"?"#DAA520"
+          ? "#DB7093"
+          : node.group === "Abstract"
+          ? "#6495ED"
+          : node.group === "Transformate"
+          ? "#DAA520"
           : classify_document(node.label),
       symbolType:
         node.group === "filtrate" ||
         node.group === "display" ||
-        node.group === "Extract" || node.group==="Abstract" || node.group==="Transformate"
+        node.group === "Extract" ||
+        node.group === "Abstract" ||
+        node.group === "Transformate"
           ? "diamond"
-          : node.group === "summary"
-          ? "square"
+          
           : "",
       size:
         node.group === "summary"
@@ -549,10 +602,23 @@ const DoctorDashboard = () => {
           ? "Filtrate"
           : node.group === "display"
           ? "Display"
+          : node.group === "summary"
+          ? node.info.name.slice(0,30) + "..."
           : node?.info
           ? node?.info?.name
+          
           : "",
       info: node.info,
+      nodeLabel: {
+        wrapText: true, // Enable text wrapping for node labels
+        fontSize: 10, // Adjust font size as needed
+        fontWeight: "normal", // Adjust font weight as needed
+        fontFamily: "Arial, sans-serif", // Adjust font family as needed
+        lineHeight: 1.2, // Adjust line height as needed
+        padding: 8, // Add padding to the node label container
+        width: 200, // Set a fixed width for the node label container
+        textAlign: "center", // Center-align the text within the node label container
+      },
     }));
 
     const links = apiResponse?.edges
@@ -769,16 +835,21 @@ const DoctorDashboard = () => {
               selectedItem === "2-2-2" ||
               selectedItem === "2-2-3" ||
               selectedItem === "2-3-1-1" ||
-              selectedItem === "2-3-1-2" || selectedItem==="2-3-1-3") &&
+              selectedItem === "2-3-1-2" ||
+              selectedItem === "2-3-1-3") &&
               dashboardItems !== "default" && (
-                <div style={{ marginLeft: "1rem", marginBottom: "1rem" }}>
+                <div style={{ marginLeft: "1rem", marginBottom: "2rem" ,maxWidth:"320px"}}>
                   <h3>Légende explicative de DEP</h3>
                   <ul
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                    }}
+                   style={{
+                    display: "flex",
+                    flexWrap: "wrap", // Allow items to wrap to the next line
+                    alignItems: "center",
+                    listStyleType: "none", // Remove default list styles
+                    padding: 0,
+                    maxWidth: "320px",
+                    marginBottom:"1rem"
+                }}
                   >
                     {legendData.map((item, index) => (
                       <li
@@ -787,6 +858,7 @@ const DoctorDashboard = () => {
                           display: "flex",
                           alignItems: "center",
                           marginRight: "1rem",
+                          marginTop:"0.5rem"
                         }}
                       >
                         <span
@@ -821,7 +893,8 @@ const DoctorDashboard = () => {
               selectedItem === "2-2-2" ||
               selectedItem === "2-2-3" ||
               selectedItem === "2-3-1-1" ||
-              selectedItem === "2-3-1-2" || selectedItem==="2-3-1-3") && (
+              selectedItem === "2-3-1-2" ||
+              selectedItem === "2-3-1-3") && (
               <Header
                 style={{
                   display: "flex",
@@ -1003,20 +1076,19 @@ const DoctorDashboard = () => {
                 <FileExcelOutlined />
                 Synthèse numérique
               </Button> */}
-                      
-                     
+
                       <Button onClick={getGraphByContenu}>
                         <SearchOutlined />
                       </Button>
                     </div>
                   )}
 
-
-                  {
-                    selectedItem==="2-3-1-2" && (
-                      <div style={{
+                  {selectedItem === "2-3-1-2" && (
+                    <div
+                      style={{
                         width: "100%",
-                      }}>
+                      }}
+                    >
                       <Button
                         style={{
                           backgroundColor:
@@ -1030,7 +1102,7 @@ const DoctorDashboard = () => {
                         <FileExcelOutlined />
                         Synthèse basée sur la prédiction(Graph based)
                       </Button>
-                     
+
                       <Button
                         style={{
                           backgroundColor:
@@ -1049,9 +1121,8 @@ const DoctorDashboard = () => {
                       <Button onClick={getGraphByContenu}>
                         <SearchOutlined />
                       </Button>
-                      </div>
-                    )
-                  }
+                    </div>
+                  )}
 
                   {selectedItem === "2-3-2" && (
                     <div
@@ -1122,27 +1193,26 @@ const DoctorDashboard = () => {
                       </Button>
                     </div>
                   )}
-                  {
-                    selectedItem==="2-3-1-3" && (
-                      <div style={{width:"100%"}}>
+                  {selectedItem === "2-3-1-3" && (
+                    <div style={{ width: "100%" }}>
                       <Button
-                      style={{
-                        backgroundColor:
-                          contenuChoisi === "openAi"
-                            ? "#C7D2DC"
-                            : "transparent",
-                        border: "none",
-                      }}
-                      onClick={() => onChangeContenu("openAi")}
-                    >
-                      <FileExcelOutlined />
-                      OpenAi
-                    </Button>
-                    <Button onClick={getGraphByContenu}>
-                      <SearchOutlined />
-                    </Button></div>
-                    )
-                  }
+                        style={{
+                          backgroundColor:
+                            contenuChoisi === "openAi"
+                              ? "#C7D2DC"
+                              : "transparent",
+                          border: "none",
+                        }}
+                        onClick={() => onChangeContenu("openAi")}
+                      >
+                        <FileExcelOutlined />
+                        OpenAi
+                      </Button>
+                      <Button onClick={getGraphByContenu}>
+                        <SearchOutlined />
+                      </Button>
+                    </div>
+                  )}
 
                   {selectedItem === "4" && !loading && (
                     <div
@@ -1195,7 +1265,7 @@ const DoctorDashboard = () => {
                 textAlign: "center",
               }}
             >
-              Ant Design ©2023 Created by Ant UED
+              
             </Footer>
           </Layout>
         </Layout>

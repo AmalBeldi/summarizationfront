@@ -166,6 +166,10 @@ function AppointmentForm() {
             Connecter
           </button>
 
+          <button className="text-appointment-btn" style={{marginInline:"0.5rem"}} onClick={()=>navigate("/")}>
+            Retour
+          </button>
+
           {/* <p className="success-message" style={{display: isSubmitted ? "block" : "none"}}>Appointment details has been sent to the patients phone number via SMS.</p> */}
         </form>
       </div>
